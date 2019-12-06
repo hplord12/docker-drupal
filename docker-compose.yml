@@ -91,11 +91,15 @@ services:
   solr:
     image: wodby/solr:$SOLR_TAG
     container_name: "${PROJECT_NAME}_solr"
+    ports:
+      - '1234:8983'
     environment:
       SOLR_DEFAULT_CONFIG_SET: $SOLR_CONFIG_SET
       SOLR_HEAP: 1024m
     labels:
       - "traefik.http.routers.${PROJECT_NAME}_solr.rule=Host(`solr.${PROJECT_BASE_URL}`)"
+    volumes:
+      - ./solr/blog:/opt/solr/server/solr/blog
 
   memcached:
     container_name: "${PROJECT_NAME}_memcached"

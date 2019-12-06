@@ -61,6 +61,45 @@ Images tags format is `[VERSION]-[STABILITY_TAG]` where:
 
 We highly encourage to use images only with stability tags.
 
+
+########### How to setup drupal composed project with docker usimg docker4drupal #########
+
+1. Download drupal using composer
+2. git clone docker4drupal repo
+3. Delete .git and docker-compose-override.yml from cloned repo.
+4. Copy all files from cloned repo to composed drupal repo.
+5.check drupal-compose.yml file and .env file for configurations.
+6. simply run docker-compose up -d to setup project.
+7.Access website as hostname set in .env file (eg. drupal.docker.localhost:8000)
+
+####### configure solr with docker  ############
+
+1. Add solr configuration in drupal-compose.yml file
+
+  solr:
+    image: wodby/solr:$SOLR_TAG
+    container_name: "${PROJECT_NAME}_solr"
+    ports:
+      - '1234:8983'
+    environment:
+      SOLR_DEFAULT_CONFIG_SET: $SOLR_CONFIG_SET
+      SOLR_HEAP: 1024m
+    labels:
+      - "traefik.http.routers.${PROJECT_NAME}_solr.rule=Host(`solr.${PROJECT_BASE_URL}`)"
+    volumes:
+      - ./solr/blog:/opt/solr/server/solr/blog
+
+2. Copy the files located at web/modules/contrib/search_api_solr/solr-conf/7.x/ to solr/blog/conf/
+
+3. Add core from url via(http://solr.drupal.docker.localhost:1234/solr)
+x
+4. Last step is to configure drupal with drupal ui. So we go to search api here  "admin/config/search/search-api"
+
+
+
+
+
+
 ## Maintenance
 
 We regularly update images used in this stack and release them together, see [releases page](https://github.com/wodby/docker4drupal/releases) for full changelog and update instructions. Most of routine updates for images and this project performed by [the bot](https://github.com/wodbot) via scripts located at [wodby/images](https://github.com/wodby/images).
